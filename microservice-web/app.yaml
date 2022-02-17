@@ -105,7 +105,7 @@ spec:
   selector:
     matchLabels:
       app: microservice-web
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
