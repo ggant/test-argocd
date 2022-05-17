@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: oraclexe-configmap
+  namespace: default
 data:
   # property-like keys; each key maps to a simple value
   # oracle_password: "manager12"
@@ -12,6 +13,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: oraclexe-secret
+  namespace: default
 type: Opaque
 data:
   app_user_password: dmFqYTEyMw==
@@ -21,6 +23,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: oraclexe-deployment
+  namespace: default
   labels:
     db: oraclexe
 spec:
@@ -63,9 +66,24 @@ spec:
             claimName: oraclexe-pvc
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: oraclexe
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    db: oraclexe
+  ports:
+    - protocol: TCP
+      port: 1521
+      targetPort: 1521
+---
+apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ms-configmap
+  namespace: default
 data:
   parameter: "D"
 ---
@@ -73,6 +91,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: microservice-web
+  namespace: default
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -86,6 +105,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ms-deployment
+  namespace: default
   labels:
     app: microservice-web
   annotations:
@@ -132,3 +152,19 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 3
             failureThreshold: 1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-service
+  namespace: default
+  labels:
+    app: microservice-web
+spec:
+  type: LoadBalancer
+  selector:
+    app: microservice-web
+  ports:
+    - protocol: TCP
+      port: 9080
+      targetPort: 9080
