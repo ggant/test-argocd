@@ -123,7 +123,7 @@ spec:
       containers:
         - name: microservice-web
           #image: microservice-web:latest
-          image: corkovic/microservice-web:1.6
+          image: corkovic/microservice-web:1.6n
           imagePullPolicy: Always
           ports:
             - containerPort: 9080
@@ -167,4 +167,4 @@ spec:
   ports:
     - protocol: TCP
       port: 9080
-      targetPort: 9080
+      targetPort: 8080
